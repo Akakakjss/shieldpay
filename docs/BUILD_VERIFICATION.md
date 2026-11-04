@@ -13,6 +13,7 @@ Verified locally on November 4, 2026. This is execution evidence, not a claim of
 | Protected import browser workflow | `node scripts/verify_import_browser.mjs`: authentication, actual replacement, provenance, clearing form state, invalidation of analysis/PDF/approval, blocked missing-proof case and clearing sensitive records on lock passed. No page errors or axe violations. Synthetic sandbox-shaped fixture, **not a PayPal case**. |
 | Actual PayPal sandbox connection | Entrant-controlled credentials completed OAuth and dispute-list reads. Timestamp milliseconds fixed after reproducing HTTP400 `INVALID_START_TIME_FORMAT`. Corrected request returned HTTP200. **Zero sandbox disputes returned.** |
 | Actual sandbox-mode local HTTP instance | Unauthenticated case reads returned401. Authenticated case reads and read-only sync returned200. Status recorded OAuth/read verification. No remote evidence or money writes. |
+| GitHub CI | Full Linux build,101 Python tests,55 React tests and both browser workflows passed: https://github.com/Akakakjss/shieldpay/actions/runs/41873732878. |
 | Python dependency audit | `pip-audit --path .venv/Lib/site-packages`: no known vulnerabilities after compatible FastAPI/Starlette/AnyIO upgrades. This is not a security guarantee. |
 | Staged-source secret scan | `detect-secrets scan --no-verify`: no findings. Private `.env`, runtime databases, caches and artifacts excluded from public source. |
 

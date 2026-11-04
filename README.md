@@ -89,6 +89,10 @@ In a synced case, **Evidence → Import sandbox evidence** accepts a documented 
 
 ## Submission materials
 
+- [Complete project and submission summary](docs/COMPLETE_SUMMARY.md)
+- [Paste-ready Devpost copy](docs/DEVPOST_COPY.md)
+- [Natural recording script for your own video](docs/RECORDING_SCRIPT.md)
+- [Original cover and actual application screenshots](docs/assets/)
 - [Strategy and idea selection](docs/STRATEGY.md)
 - [Refreshed original merchant reports and competition](docs/RESEARCH_REFRESH.md)
 - [Executed verification and known limitations](docs/BUILD_VERIFICATION.md)

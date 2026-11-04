@@ -15,7 +15,7 @@
 **Partially verified:** actual entrant-controlled sandbox OAuth and dispute-list reads succeeded. Zero disputes were returned. Evidence submission and remote attachment/readback remain unverified. Do not conceal that distinction in Devpost copy.
 
 - [x] Configure entrant-controlled sandbox credentials privately; authenticate and list disputes. No credentials were committed, filmed or pasted into chat.
-- [ ] Use a separate sandbox-mode database and admin token. Verify the environment never switches to production endpoints and synthetic demo IDs/evidence cannot enter sandbox writes.
+- [x] Use separate sandbox state/admin authentication and verify fixed sandbox origins and synthetic-ID rejection in tests.
 - [ ] With separately authorized sandbox operations, verify OAuth and list/detail reads against an actual eligible sandbox case; record sanitized evidence of the exact case, state, API action and observed result. Do not perform any network writes as part of this documentation task.
 - [x] Integrate and browser-test the protected structured-evidence importer against an actual isolated HTTP backend. Input remains unverified and synthetic; import is not carrier authentication or approval.
 - [ ] If evidence submission is later authorized, use only that sandbox case's appropriate non-production evidence, exact current `provide-evidence` HATEOAS action and approved current packet. PayPal actions depend on state; do not force an unsupported case through the API.[10]
@@ -26,34 +26,34 @@
 
 Coordinated execution passed 101 Python tests including opt-in ONNX inference, 55 React tests, production build, actual-HTTP demo and protected importer browser checks. See `BUILD_VERIFICATION.md`; remaining source changes require rerunning affected checks.
 
-- [ ] Run `python scripts/run.py --check`; preserve its real backend/frontend test and build output and resolve failures.
-- [ ] Run the documented frontend browser check from `frontend`: `npm run test:browser`. Inspect its actual report/artifacts rather than relying only on a passing process code.
-- [ ] Start a fresh synthetic demo, warm/download the real ONNX model and verify a new analysis reports `local-onnx`. Verify lexical fallback stays honestly labeled on failure; it is not AI inference.
-- [ ] Delivered case: inspect exact quotes, source IDs and hashes; confirm unrelated-order records are excluded. Treat readiness as internal policy status, not probability.
-- [ ] Download and open the actual PDF; confirm valid PDF content, synthetic label, source references and limitations.
-- [ ] Explicitly approve the current packet, confirm simulated submission and read back the audit. Verify stale/changed packets require review and simulated receipts are not remote acceptance.
-- [ ] In-transit and contradictory/wrong-item cases: verify gaps/contradictions block defense; no automatic refund or fraud accusation.
-- [ ] Check safe missing-credential/errors, keyboard focus, desktop/mobile layout, console/network failures and the final UI labels. Existing `frontend/TESTING.md` results are useful prior evidence, not this final run.
+- [x] Run the documented launcher from a fresh public clone: dependency installation,101 backend tests,55 React tests and production build passed.
+- [x] Run actual-HTTP browser checks and inspect the demo/importer reports and artifacts.
+- [x] Verify real ONNX inference in fresh processes and honest fallback behavior in tests. A cold, empty-cache first download was not separately benchmarked.
+- [x] Inspect exact scoped citations, source hashes and exclusion of unrelated-order evidence.
+- [x] Download, parse and render the actual synthetic PDF with references and limitations.
+- [x] Exercise explicit approval, simulated receipt, audit readback and stale-packet refusal.
+- [x] Verify missing-proof and contradictory cases block defense without automatic refunds or fraud accusations.
+- [x] Check credential/error paths, keyboard interaction, mobile layout, page errors and accessibility in the recorded test runs.
 
 ## 4. Public MIT repository — published and anonymously verified
 
 **Published:** https://github.com/Akakakjss/shieldpay — public source verified anonymously; GitHub detects the MIT license. A fresh public clone passed documented install/tests/build. No private configuration was included.
 
-- [ ] Inspect the final source and full git history for secrets, personal data, local databases, downloaded model artifacts and accidental synthetic/real-data mixing. Ignore rules are not a retroactive secret scrub.
-- [ ] Publish the actual repository only in the authorized publishing workflow. Include source, lockfiles, required assets, complete README, these docs, MIT license and third-party notices. Verify license detection is visible on the repository page.[1]
-- [ ] Read the exact public repository back while logged out; verify the intended revision/files and license are accessible, not merely a successful push.
-- [ ] Clone the public URL into a clean location and follow only the README setup instructions. Validate dependency installation, frontend build, fresh SQLite state, first model download/inference and full synthetic workflow without private keys.
-- [ ] Update `SUBMISSION.md` from “expected/not created” only after that readback. Explain safe sandbox-access setup separately; do not publish production credentials or reusable secrets.
+- [x] Inspect source/history and staged changes. Secret scanning found no staged findings; known private project credentials were absent from the96 tracked history blobs checked. No .env/runtime data was included.
+- [x] Publish the authorized repository with source, lockfiles, required assets, README and MIT license; verify GitHub license detection.[1]
+- [x] Read public metadata/README anonymously and verify the intended revision and license.
+- [x] Clone the public URL into a clean directory and run README installation/tests/build without private keys. Real-model tests reused an available model cache.
+- [x] Update submission materials only after publication/readback; keep secrets private.
 
 ## 5. Functional access: choose the local route, optionally add hosting
 
-- [ ] Use the tested public repo with clear complete setup/run instructions as the functional-access route. This is permitted without a hosted deployment.[1]
+- [x] Use the verified public repo and local run instructions as the functional-access route; no hosted app is claimed.[1]
 - [ ] If a hosted demo is later authorized, deploy synthetic mode only, with no PayPal credentials. Verify the actual URL, cold start, ONNX memory/download behavior, PDF and safe reset before adding it to submission fields. A `render.yaml` file is not deployment evidence.
 - [ ] Keep code, model/dependency access and any demo or required test access free and unrestricted through **December 15, 2026, 8:00 a.m. Pacific**, the end of judging. Do not rely on a trial that expires beforehand.[1]
 
 ## 6. Video and truthful presentation — entrant
 
-**Local recording complete:** `artifacts/shieldpay-demo-draft.mp4` is an actual narrated UI/PDF recording, verified by ffprobe at160 seconds. It is a draft requiring audiovisual review; no YouTube upload/URL exists yet.
+**Entrant will use their own video.** The assistant's160-second local draft is optional reference material, not the final submission video. The entrant's recording and public YouTube URL have not been provided or verified.
 
 - [x] Record actual ONNX/citations, downloaded/rendered PDF, explicit approval, simulated receipt, blocked/contradictory cases and sanitized actual read-only sandbox proof.
 - [ ] Keep the synthetic label and limitations visible. Do not describe mock-transport tests as real sandbox calls, semantic embeddings as generative reasoning or a simulated receipt as evidence sent to PayPal.

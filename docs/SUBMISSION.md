@@ -1,5 +1,7 @@
 # ShieldPay — Devpost submission draft
 
+Use [DEVPOST_COPY.md](DEVPOST_COPY.md) for the current humanized, paste-ready story and [COMPLETE_SUMMARY.md](COMPLETE_SUMMARY.md) for the consolidated handoff. The entrant will upload their own video; the assistant's local draft is not the final submission video. No entry has been saved or submitted in a Devpost account.
+
 **Status: submission draft, not entered on Devpost.** The MIT repository is public and verified through an anonymous read and a fresh public-clone install/test/build. A narrated160-second video draft exists locally, but no YouTube upload or hosted application is claimed.
 
 ## Submission fields and remaining links
@@ -54,7 +56,7 @@ Semantic retrieval is useful for finding relevant records, but it cannot authent
 
 ## What's next
 
-Verify evidence upload against an appropriate sandbox-only case with explicit authorization; publish and clean-clone test the MIT repository; and upload the working demonstration to public YouTube. The importer and read-only sandbox connection are now tested. Then conduct actual merchant workflow interviews and measure evidence fidelity and preparation effort on consented, redacted examples.
+Verify evidence upload against an appropriate sandbox-only case with explicit authorization, then conduct merchant workflow interviews on consented, redacted examples. Publication and clean-clone testing are complete. The entrant's own public YouTube video and final Devpost submission remain outstanding.
 
 There has been **no customer validation, production use, measured recovery improvement or measured time saving**. AG Studio, Studio Agent Framework and PayPal Agent Toolkit are not part of the implemented stack. No public deployment is claimed. The current policy is deliberately narrow and does not implement every Seller Protection condition or verify document authenticity; PayPal's published eligibility rules are broader.[3]
 
