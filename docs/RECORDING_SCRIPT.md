@@ -6,13 +6,13 @@ Use this for your own screen recording. The spoken section is written in a conve
 
 I built ShieldPay for small PayPal merchants who need to pull a dispute response together from order records, tracking updates, and customer messages.
 
-Merchant forum posts kept pointing to the same headache: the evidence is scattered, and the response deadline doesn't wait for you to sort it out.
+A merchant forum post about incorrect tracking gave me the starting point. I wanted someone reviewing a case to see which records support a response before they send it.
 
 This demo uses synthetic records. Any submission you see here is a simulation.
 
 Here's an item-not-received case. I click Analyze, and a local AI model ranks the records for this order. Each finding shows the original text and a link back to its source. I can check the tracking number myself instead of taking the recommendation on trust.
 
-The order and delivery records agree, so I can generate a response packet. This is a real PDF with the supporting quotations, source identifiers, and a hash for the reviewed content. That hash helps detect changes; it doesn't prove a document is authentic.
+The order and delivery records agree, so I can generate a response packet. This is the actual PDF, with supporting quotations and source identifiers. Content hashes tie it to the stored text I reviewed.
 
 Before anything can move forward, I review the PDF and approve that specific version. If the evidence changes, the old approval can't authorize the new packet.
 
@@ -24,7 +24,7 @@ PayPal sandbox authentication and dispute-list reads have been tested with real 
 
 There's also a protected import screen for structured sandbox records. Imported evidence stays labeled as unverified, and replacing it clears the previous review state.
 
-The code is public on GitHub. ShieldPay helps a merchant review a response they can explain, while leaving the final decision with a person. It doesn't promise that every dispute can or should be fought.
+The code is public on GitHub. ShieldPay brings the records and their gaps into one review, so a merchant can prepare a response they can explain. A person stays responsible for the decision to send it.
 
 ## Recording cues
 
@@ -37,7 +37,7 @@ These are editing targets, not a measured runtime for your recording. Rehearse w
 | Source check | Open the carrier citation and show the original tracking/delivery record. |
 | PDF | Return to Review, generate/download the PDF and open the actual file. |
 | Approval | Enter your reviewer name, confirm PDF review, approve, then confirm the simulation. Show the labeled receipt. |
-| Negative cases | Analyze1043 for missing delivery proof, then1044 for conflicting evidence/refund review. |
+| Negative cases | Analyze 1043 for missing delivery proof, then 1044 for conflicting evidence/refund review. |
 | PayPal status | Show the sanitized actual read-only check, not your private .env. Explain that upload is unverified. |
 | Close | Briefly show the public repository URL. |
 

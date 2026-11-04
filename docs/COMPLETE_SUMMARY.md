@@ -60,9 +60,9 @@ The assistant's 160-second video draft is not the submission video. You chose to
 
 Project name: **ShieldPay**.
 
-Tagline: **Review PayPal dispute evidence, build a cited response, and stop when the facts don't support it.**
+Tagline: **Turn scattered PayPal dispute records into a response you can check before you send.**
 
-Use `DEVPOST_COPY.md` for the story, tools and judge walkthrough. Use the public repository as the functional-access route; do not put a localhost address into a field meant for a publicly hosted demo. The official rules allow complete local setup instructions instead of hosting.[1]
+Use `DEVPOST_COPY.md` for the product story and `ENTRY_FIELDS.md` for account-entry instructions. The detailed verification notes here are an engineering handoff, not the Devpost pitch. Use the public repository as the functional-access route; do not put a localhost address into a field meant for a publicly hosted demo. The official rules allow complete local setup instructions instead of hosting.[1]
 
 Use the included original screenshots, with their synthetic labels intact. AG Grid Community is implemented; AG Studio, Studio Agent Framework and PayPal Agent Toolkit are not.
 
@@ -74,7 +74,7 @@ Use the included original screenshots, with their synthetic labels intact. AG Gr
 
 Submission deadline: **November 12, 2026, noon Pacific / 3 p.m. EST / 20:00 UTC**. Keep the required judging access available through December 15, 2026, 8 a.m. Pacific.[1]
 
-An authorized test against an appropriate sandbox dispute would strengthen the PayPal demonstration. Until then, retain the evidence-upload limitation in both the video and submission.
+An authorized test against an appropriate sandbox dispute would strengthen the PayPal demonstration. Until then, retain the evidence-upload limitation in both the video and submission. See [CRITIQUE_RESPONSE.md](CRITIQUE_RESPONSE.md) for the checked sandbox setup path and the decisions made from the external evaluation.
 
 ## Sources
 

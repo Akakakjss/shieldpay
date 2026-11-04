@@ -1,12 +1,12 @@
 # ShieldPay
 
-**The dispute assistant that shows its evidence—and knows when not to defend.**
+**Turn scattered PayPal dispute records into a response you can check before you send.**
 
-ShieldPay helps a small merchant inspect a PayPal dispute, retrieve order-scoped records, build a cited PDF packet, and approve a specific packet before any submission. Missing or contradictory evidence blocks defense instead of becoming an AI-written accusation.
+ShieldPay helps small merchants assemble an item-not-received dispute response from order records, tracking updates and customer messages. Inspect the source text, download a cited PDF, and approve the exact version you reviewed. Missing or conflicting evidence pauses the defense for human review.
 
 > **Hackathon prototype.** Default mode is a working interactive demonstration with explicitly synthetic records. Its submission receipts are simulated. PayPal sandbox integration is a separate, credential-gated mode. No production PayPal endpoints, automatic refunds, dispute-win predictions, or hold-release guarantees.
 
-**Verified build:** 101 Python tests (including actual ONNX inference), 55 React tests, real-HTTP browser workflows and protected evidence import. Actual PayPal sandbox OAuth and dispute-list reads succeeded; the sandbox contains no disputes, so evidence upload remains unverified. See [execution evidence and limitations](docs/BUILD_VERIFICATION.md).
+**Verified build:** 101 Python tests (including actual ONNX inference), 55 React tests, real-HTTP browser workflows and protected evidence import. PayPal sandbox authentication and reads are verified; evidence upload remains unverified. See [execution evidence and limitations](docs/BUILD_VERIFICATION.md).
 
 ## Run locally
 
@@ -91,6 +91,8 @@ In a synced case, **Evidence → Import sandbox evidence** accepts a documented 
 
 - [Complete project and submission summary](docs/COMPLETE_SUMMARY.md)
 - [Paste-ready Devpost copy](docs/DEVPOST_COPY.md)
+- [Account-entry checklist](docs/ENTRY_FIELDS.md)
+- [External critique decisions and sandbox completion steps](docs/CRITIQUE_RESPONSE.md)
 - [Natural recording script for your own video](docs/RECORDING_SCRIPT.md)
 - [Original cover and actual application screenshots](docs/assets/)
 - [Strategy and idea selection](docs/STRATEGY.md)
