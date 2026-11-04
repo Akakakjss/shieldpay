@@ -1,0 +1,17 @@
+# Optional public synthetic demo. No PayPal credentials on a public demo.
+# Deploy only after reviewing Render account/plan. This file is not proof of deployment.
+services:
+  - type: web
+    name: shieldpay-demo
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: SHIELDPAY_MODE
+        value: demo
+      - key: SHIELDPAY_AI
+        value: onnx
+      - key: SHIELDPAY_DB
+        value: /app/data/shieldpay.sqlite3
+# Free instances are ephemeral; reset demo after restarts. CPU/memory capacity
+# and model-download time must be measured before relying on this for judging.

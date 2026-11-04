@@ -1,0 +1,83 @@
+.evidence-import {
+  margin: 18px 0 24px;
+  border: 1px solid #cdd6c2;
+  border-radius: 5px;
+  background: #f5f7ee;
+  color: #344d41;
+  overflow: hidden;
+}
+.evidence-import summary {
+  cursor: pointer;
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 44px;
+}
+.import-body {
+  padding: 0 14px 16px;
+}
+.import-body h4 {
+  font-size: 15px;
+  margin: 12px 0;
+}
+.import-body p,
+.import-help dd,
+.import-help dt {
+  font-size: 11px;
+  line-height: 1.85;
+}
+.import-body p {
+  margin: 10px 0;
+}
+.import-help {
+  margin-top: 14px;
+  border-block: 1px solid #cdd6c2;
+}
+.import-help summary {
+  padding-inline: 0;
+}
+.import-help dl {
+  margin: 10px 0;
+}
+.import-help dt {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+}
+.import-help dd {
+  margin: 0 0 9px;
+}
+.import-help pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font:
+    10px/1.8 'IBM Plex Mono',
+    monospace;
+  background: #fcfbf7;
+  padding: 10px;
+  border: 1px solid #cdd6c2;
+  border-radius: 4px;
+}
+.import-result {
+  margin-top: 14px;
+  border: 1px solid #aebfa2;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.85;
+  color: #344d41;
+  background: #e9f1df;
+}
+.import-body .inline-error ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+.import-body .inline-error li {
+  overflow-wrap: anywhere;
+}
+.import-json {
+  resize: vertical;
+  font:
+    11px/1.8 'IBM Plex Mono',
+    monospace;
+  min-height: 180px;
+}

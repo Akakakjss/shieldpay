@@ -1,0 +1,167 @@
+/* Small operator labels retain hierarchy without sacrificing WCAG AA contrast. */
+:root {
+  --muted: #586b54;
+}
+.top-status,
+.eyebrow,
+.summary-strip > div > span,
+.summary-strip > div > small,
+.summary-strip strong small,
+.summary-strip .policy-note,
+.panel-heading > .small,
+.queue-footer,
+.queue-note p,
+.inspector-topline > .mono,
+.case-heading > .mono,
+.case-heading > div > span,
+.case-facts span,
+.section-label,
+.inspector-bottom,
+.workspace-footer,
+.case-cell > span,
+.inspector-tabs button,
+.analysis-provider,
+.readiness > span,
+.readiness small,
+.claims h4 > span,
+.claim-number,
+.claim blockquote,
+.source-meta,
+.source-record dl,
+.workflow-steps,
+.workflow-steps i,
+.packet-fingerprint > span,
+.packet-fingerprint code,
+.approval-confirmed small,
+.confirmation-copy,
+.audit-header p:not(.eyebrow),
+.audit-toolbar > .mono,
+.audit-event time,
+.audit-meta,
+.audit-event p,
+.connection-facts > div,
+.settings-detail,
+.settings-inset p,
+.settings-inset code,
+.settings-side p:not(.eyebrow):not(.micro),
+.source-record dd {
+  color: #586b54;
+}
+.inspector-tabs button[aria-selected='true'] {
+  color: #08796e;
+}
+.connection-badge {
+  color: #7a5520;
+}
+.case-facts span,
+.eyebrow,
+.section-label,
+.inspector-topline > .mono,
+.panel-heading > .small,
+.packet-fingerprint > span {
+  font-size: 9px;
+}
+.case-facts strong {
+  font-size: 11px;
+  line-height: 1.6;
+}
+.case-heading > div > span {
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.case-heading > div > strong {
+  flex-shrink: 0;
+}
+.micro,
+.queue-footer,
+.queue-note p,
+.summary-strip > div > small {
+  font-size: 11px;
+}
+.workspace-footer {
+  font-size: 9px;
+}
+.claim p,
+.claim blockquote,
+.source-text {
+  font-size: 12px;
+}
+.workflow-steps {
+  font-size: 10px;
+}
+.packet-fingerprint code {
+  font-size: 9px;
+}
+.source-record dl {
+  font-size: 10px;
+}
+.source-meta,
+.case-cell > span,
+.analysis-provider {
+  font-size: 10px !important;
+}
+.inspector-topline,
+.case-heading,
+.case-facts,
+.inspector-tabs,
+.inspector-bottom {
+  flex-shrink: 0;
+}
+@media (min-width: 951px) {
+  .inspector {
+    display: flex;
+    flex-direction: column;
+    max-height: 900px;
+  }
+  .inspector-body {
+    overflow: auto;
+    min-height: 0;
+  }
+  .inspector-body > .audit-entries .audit-event-title {
+    flex-direction: column;
+    gap: 7px;
+  }
+}
+@media (max-width: 600px) {
+  .case-facts {
+    grid-template-columns: 1fr 1fr;
+  }
+  .case-facts > div:last-child {
+    grid-column: 1/-1;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+  .case-facts strong {
+    font-size: 10px;
+  }
+  .inspector-tabs {
+    gap: 20px;
+    padding-inline: 17px;
+  }
+  .inspector-tabs button {
+    font-size: 10px;
+  }
+  .summary-strip > div > span {
+    font-size: 9px;
+  }
+  .summary-strip > div > small {
+    font-size: 10px;
+  }
+  .case-heading > div {
+    align-items: flex-start;
+  }
+  .workspace-footer {
+    font-size: 8px;
+  }
+  .rail-links button {
+    font-size: 9px;
+  }
+  .citations button {
+    min-height: 36px;
+    font-size: 10px;
+  }
+  .source-record .source-title h4 {
+    font-size: 13px;
+  }
+}

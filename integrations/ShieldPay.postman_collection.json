@@ -1,0 +1,171 @@
+{
+  "info": {
+    "name": "ShieldPay \u00b7 local judge walkthrough",
+    "description": "Synthetic demo by default. Sandbox requests require an isolated sandbox instance and a local secret admin_token. Never publish secrets. This collection is an API client, not evidence of a tested PayPal sandbox connection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {"key": "key", "value": "X-Admin-Token", "type": "string"},
+      {"key": "value", "value": "{{admin_token}}", "type": "string"},
+      {"key": "in", "value": "header", "type": "string"}
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8787"
+    },
+    {
+      "key": "case_id",
+      "value": "REPLACE_WITH_CASE_ID_FROM_LIST"
+    },
+    {
+      "key": "packet_hash",
+      "value": "REPLACE_AFTER_ANALYSIS"
+    },
+    {
+      "key": "approval_id",
+      "value": "REPLACE_AFTER_APPROVAL"
+    },
+    {
+      "key": "admin_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1 \u00b7 Health and honest provider",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/health"
+      }
+    },
+    {
+      "name": "2 \u00b7 List dispute queue",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/cases"
+      }
+    },
+    {
+      "name": "3 \u00b7 Inspect evidence and audit",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/cases/{{case_id}}"
+      }
+    },
+    {
+      "name": "4 \u00b7 Analyze cited evidence",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{base_url}}/api/cases/{{case_id}}/analyze"
+      }
+    },
+    {
+      "name": "5 \u00b7 Download real PDF",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/cases/{{case_id}}/packet.pdf"
+      }
+    },
+    {
+      "name": "6 \u00b7 Approve specific packet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Admin-Token",
+            "value": "{{admin_token}}",
+            "description": "Required only for sandbox admin operations. Keep local and secret."
+          }
+        ],
+        "url": "{{base_url}}/api/cases/{{case_id}}/approve",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"packet_hash\": \"{{packet_hash}}\",\n  \"approved_by\": \"Local judge\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "7 \u00b7 Submit (SIMULATED in demo)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "X-Admin-Token",
+            "value": "{{admin_token}}",
+            "description": "Required only for sandbox admin operations. Keep local and secret."
+          }
+        ],
+        "url": "{{base_url}}/api/cases/{{case_id}}/submit",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"packet_hash\": \"{{packet_hash}}\",\n  \"approval_id\": \"{{approval_id}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "8 \u00b7 Read audit trail",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/audit"
+      }
+    },
+    {
+      "name": "9 \u00b7 Reset SYNTHETIC demo only",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{base_url}}/api/demo/reset"
+      }
+    },
+    {
+      "name": "Sandbox \u00b7 Read connection readiness",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/paypal/status"
+      }
+    },
+    {
+      "name": "Sandbox \u00b7 Sync real sandbox disputes",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Admin-Token",
+            "value": "{{admin_token}}",
+            "description": "Required only for sandbox admin operations. Keep local and secret."
+          }
+        ],
+        "url": "{{base_url}}/api/paypal/sync"
+      }
+    }
+  ]
+}

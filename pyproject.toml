@@ -1,0 +1,25 @@
+[project]
+name = "shieldpay"
+version = "0.1.0"
+description = "Evidence-first dispute review, with a strictly sandbox-only PayPal adapter"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.162.0,<0.163",
+  "starlette>=1.10.0,<2",
+  "uvicorn>=0.34,<1",
+  "httpx>=0.28,<1",
+  "python-dotenv>=1.1,<2",
+  "anyio>=4.16.0,<5",
+  "reportlab>=4.3,<5",
+  "fastembed>=0.7,<1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "pypdf>=5,<7"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.uv]
+package = false

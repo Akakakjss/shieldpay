@@ -1,0 +1,26 @@
+# Credentials, runtime state, model caches and dependencies
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+node_modules/
+frontend/dist/
+frontend/coverage/
+data/
+*.sqlite*
+*.db
+.cache/
+models/
+artifacts/
+playwright-report/
+test-results/
+frontend/test-artifacts/
+# Local coordination notes are not part of the public deliverable.
+IMPLEMENTATION_PASS.md
+REVIEW_FIXES.md
+*.log
+.DS_Store
