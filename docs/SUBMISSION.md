@@ -1,6 +1,6 @@
 # ShieldPay — Devpost submission draft
 
-**Status: local draft, not submitted.** Public repository publishing is authorized at the expected URL below, but the repository has not yet been created. No hosted demo or YouTube video is available. No external publication or submission is performed by this document.
+**Status: submission draft, not entered on Devpost.** The MIT repository is public and verified through an anonymous read and a fresh public-clone install/test/build. A narrated160-second video draft exists locally, but no YouTube upload or hosted application is claimed.
 
 ## Submission fields and remaining links
 
@@ -8,9 +8,9 @@
 | --- | --- |
 | Project name | ShieldPay |
 | Tagline | The dispute assistant that shows its evidence—and knows when not to defend. |
-| Public source repository | Expected: `https://github.com/Akakakjss/shieldpay` — **NOT YET CREATED / not a working public link** |
-| YouTube demo | **REQUIRED — NOT RECORDED / NOT UPLOADED**; insert a publicly visible YouTube URL after verifying playback and a runtime below three minutes. |
-| Functional demo | Local runnable repository is the intended access route; public repo availability and clean-clone verification remain launch gates. Hosted URL: **none**, hosting optional.[1] |
+| Public source repository | https://github.com/Akakakjss/shieldpay — public; GitHub detects MIT; anonymous access verified. |
+| YouTube demo | **REQUIRED — NOT UPLOADED**. Local narrated draft: `artifacts/shieldpay-demo-draft.mp4`,160 seconds. Insert a public YouTube URL only after upload and playback verification. |
+| Functional demo | The public repository's complete local instructions were exercised from a fresh public clone. Hosted URL: **none**; hosting optional.[1] |
 | Platform | Desktop web browser; local FastAPI server, Python environment via uv, and Node.js build toolchain. |
 | Built with | Python, FastAPI, SQLite, httpx, ReportLab, FastEmbed, ONNX Runtime, BAAI/bge-small-en-v1.5, React, Vite, AG Grid Community, PayPal Disputes REST API sandbox adapter. |
 | License | MIT for original project code; dependencies and model weights retain their own licenses. Verify GitHub detects the root license after publication. |
@@ -60,7 +60,7 @@ There has been **no customer validation, production use, measured recovery impro
 
 ## Judge run instructions
 
-Once the public repository exists, follow its root README:
+Follow the verified public repository's root README:
 
 ```bash
 git clone https://github.com/Akakakjss/shieldpay.git

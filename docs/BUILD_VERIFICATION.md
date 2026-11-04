@@ -36,6 +36,8 @@ No real sandbox evidence upload, remote attachment acceptance/readback, dispute 
 
 ## Reproduce
 
+Public release: https://github.com/Akakakjss/shieldpay. Verified anonymous metadata/README access and MIT detection, then cloned the public URL and successfully ran `python scripts/run.py --check` with opt-in ONNX tests. Local private configuration was absent from the clone. GitHub CI installation is verified separately from these local results.
+
 ```bash
 python scripts/run.py --check
 # Optional real-model tests (POSIX shell; set the same environment variable in your shell on Windows):

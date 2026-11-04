@@ -35,9 +35,9 @@ Coordinated execution passed 101 Python tests including opt-in ONNX inference, 5
 - [ ] In-transit and contradictory/wrong-item cases: verify gaps/contradictions block defense; no automatic refund or fraud accusation.
 - [ ] Check safe missing-credential/errors, keyboard focus, desktop/mobile layout, console/network failures and the final UI labels. Existing `frontend/TESTING.md` results are useful prior evidence, not this final run.
 
-## 4. Public MIT repository — publishing authorized separately, not done here
+## 4. Public MIT repository — published and anonymously verified
 
-**Expected:** `https://github.com/Akakakjss/shieldpay` — **not yet created**.
+**Published:** https://github.com/Akakakjss/shieldpay — public source verified anonymously; GitHub detects the MIT license. A fresh public clone passed documented install/tests/build. No private configuration was included.
 
 - [ ] Inspect the final source and full git history for secrets, personal data, local databases, downloaded model artifacts and accidental synthetic/real-data mixing. Ignore rules are not a retroactive secret scrub.
 - [ ] Publish the actual repository only in the authorized publishing workflow. Include source, lockfiles, required assets, complete README, these docs, MIT license and third-party notices. Verify license detection is visible on the repository page.[1]
