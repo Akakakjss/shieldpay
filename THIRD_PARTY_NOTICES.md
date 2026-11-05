@@ -11,6 +11,7 @@ Original ShieldPay code: MIT (`LICENSE`). Bundled dependencies retain their own 
 | Uvicorn | ASGI server | BSD-3-Clause · https://github.com/encode/uvicorn |
 | HTTPX | PayPal sandbox HTTP client | BSD-3-Clause · https://github.com/encode/httpx |
 | ReportLab | Evidence PDF | BSD-style · https://www.reportlab.com/opensource/ |
+| DejaVu Sans Mono | Bundled PDF font | DejaVu/Bitstream Vera license and public-domain changes; full notice in `backend/assets/fonts/DejaVu-LICENSE.txt` · font from https://github.com/matplotlib/matplotlib/blob/v3.10.8/lib/matplotlib/mpl-data/fonts/ttf/DejaVuSansMono.ttf · project https://dejavu-fonts.github.io/ |
 | FastEmbed | Local semantic retrieval | Apache-2.0 · https://github.com/qdrant/fastembed |
 | ONNX Runtime | Model inference | MIT · https://github.com/microsoft/onnxruntime |
 | BAAI/bge-small-en-v1.5 | Downloaded embedding weights | MIT (model card) · https://huggingface.co/BAAI/bge-small-en-v1.5 |

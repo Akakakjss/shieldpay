@@ -2,6 +2,7 @@ import React, { useId, useState } from 'react';
 import './import.css';
 import { validateImport } from './importValidation';
 import ConfirmDialog from './ConfirmDialog';
+import RawEvidenceDraft from './RawEvidenceDraft';
 
 export default function EvidenceImport({
   detail,
@@ -13,20 +14,34 @@ export default function EvidenceImport({
 }) {
   const id = useId();
   const [text, setText] = useState('');
+  const [mode, setMode] = useState('json');
+  const [draftReset, setDraftReset] = useState(0);
+  const [rawDraftIndices, setRawDraftIndices] = useState([]);
   const [reviewer, setReviewer] = useState('');
   const [acknowledged, setAcknowledged] = useState(false);
-  const validation = validateImport(text, reviewer, detail.order_id);
+  const validation = validateImport(text, reviewer, detail.order_id, { rawDraftIndices });
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [pending, setPending] = useState(null);
+  function resetDraft() {
+    setText('');
+    setRawDraftIndices([]);
+    setDraftReset((value) => value + 1);
+    setReviewer('');
+    setAcknowledged(false);
+    setError('');
+    setResult(null);
+  }
   async function refreshReplacement(response) {
     try {
       await onChange(detail.id);
       setResult(response);
       setPending(null);
       setText('');
+      setRawDraftIndices([]);
+      setDraftReset((value) => value + 1);
       setReviewer('');
       setAcknowledged(false);
       setError('');
@@ -81,7 +96,7 @@ export default function EvidenceImport({
     {
       type: 'carrier',
       title: 'Synthetic delivery record',
-      text: `Order: ${detail.order_id}\nTracking: TEST-101\nDelivery status: DELIVERED\nDelivered at: 2025-01-02T12:00:00Z`,
+      text: `Order: ${detail.order_id}\nTracking: TEST-101\nCarrier: UPS\nDelivery status: DELIVERED\nDelivered at: 2025-01-02T12:00:00Z`,
       occurred_at: '2025-01-02T12:00:00Z',
       order_id: detail.order_id,
     },
@@ -140,7 +155,8 @@ export default function EvidenceImport({
             Text fields are case-sensitive: each line uses a colon and a space. Include exactly one
             matching Order field in every record. Order and carrier Tracking values must match.
             Delivery proof needs Delivery status: DELIVERED and a nonfuture, timezone-bearing
-            Delivered at timestamp. Arbitrary prose is not parsed as proof.
+            Delivered at timestamp. The PayPal structured payload also needs an exact supported
+            Carrier field, for example Carrier: UPS. Arbitrary prose is not parsed as proof.
           </p>
           <p>
             Buyer receipt text supported by the deterministic parser is shown below. To report a
@@ -171,20 +187,66 @@ export default function EvidenceImport({
             generate a new PDF and approve it before responding.
           </div>
         )}
-        <label className="form-label" htmlFor={`${id}-json`}>
-          Source records JSON
-        </label>
-        <textarea
-          disabled={busy || !!pending}
-          id={`${id}-json`}
-          className="text-input import-json"
-          rows={10}
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          spellCheck={false}
-          autoComplete="off"
-          placeholder="Paste a JSON array of source records…"
-        />
+        <fieldset disabled={busy || !!pending}>
+          <legend>Input mode</legend>
+          <label>
+            <input
+              type="radio"
+              name={`${id}-mode`}
+              checked={mode === 'json'}
+              onChange={() => setMode('json')}
+            />{' '}
+            JSON
+          </label>{' '}
+          <label>
+            <input
+              type="radio"
+              name={`${id}-mode`}
+              checked={mode === 'raw'}
+              onChange={() => setMode('raw')}
+            />{' '}
+            Raw paste builder
+          </label>
+        </fieldset>
+        <div hidden={mode !== 'raw'}>
+          <RawEvidenceDraft
+            key={draftReset}
+            orderId={detail.order_id}
+            text={text}
+            rawDraftIndices={rawDraftIndices}
+            onAdd={(value, index) => {
+              setText(value);
+              setRawDraftIndices((indices) => [...indices, index]);
+            }}
+            disabled={busy || !!pending}
+          />
+        </div>
+        <div hidden={mode !== 'json'}>
+          <label className="form-label" htmlFor={`${id}-json`}>
+            Source records JSON
+          </label>
+          <textarea
+            disabled={busy || !!pending}
+            id={`${id}-json`}
+            className="text-input import-json"
+            rows={10}
+            value={text}
+            onChange={(event) => {
+              setText(event.target.value);
+              setRawDraftIndices([]);
+            }}
+            spellCheck={false}
+            autoComplete="off"
+            placeholder="Paste a JSON array of source records…"
+          />
+        </div>
+        {rawDraftIndices.length > 0 && (
+          <p>
+            Deterministic analysis uses exact fields; arbitrary prose may require human
+            interpretation and may remain blocked by that policy. No facts or buyer association are
+            inferred.
+          </p>
+        )}
         <label className="form-label" htmlFor={`${id}-reviewer`}>
           Reviewed by
         </label>
@@ -220,6 +282,14 @@ export default function EvidenceImport({
             </ul>
           </div>
         )}
+        <button
+          className="secondary wide"
+          type="button"
+          disabled={busy || !!pending}
+          onClick={resetDraft}
+        >
+          Reset import draft
+        </button>
         <button
           className="primary wide"
           disabled={!validation.valid || !acknowledged || busy || !!pending}

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from backend.store import digest, now
 
 
-POLICY_VERSION = "shieldpay-evidence-policy-1"
+POLICY_VERSION = "shieldpay-evidence-policy-2"
 
 
 def fields(text):
@@ -95,6 +95,12 @@ def analyze(case, retriever):
             raise ValueError()
     except (ValueError, TypeError, AttributeError):
         gaps.append("Response deadline is missing, invalid, or expired.")
+    # The same pure validator used by PayPal must accept every ready packet.
+    from backend.evidence_payload import build_evidence_payload
+    try:
+        build_evidence_payload(case, "Eligibility check")
+    except ValueError as exc:
+        gaps.append("Structured evidence cannot be constructed: " + str(exc))
     can_submit = not gaps and not contradictions
     recommendation = "refund_review" if contradictions else ("defend" if can_submit else "request_information")
     summary = ({"defend": "Matching order and delivery evidence support a human-reviewed defense.",

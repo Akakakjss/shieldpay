@@ -24,7 +24,7 @@
 
 ## 3. Final local-build proof — coordinator
 
-Coordinated execution passed 101 Python tests including opt-in ONNX inference, 55 React tests, production build, actual-HTTP demo and protected importer browser checks. See `BUILD_VERIFICATION.md`; remaining source changes require rerunning affected checks.
+November 5 coordinated local execution passed 147 Python tests including actual ONNX inference, 73 React tests, production build, actual-HTTP model-backed demo with PDF/payload preview and approval invalidation, and protected raw-paste importer browser checks. See `BUILD_VERIFICATION.md`; remaining source changes require rerunning affected checks. The earlier clean-public-clone check below belongs to the prior release.
 
 - [x] Run the documented launcher from a fresh public clone: dependency installation,101 backend tests,55 React tests and production build passed.
 - [x] Run actual-HTTP browser checks and inspect the demo/importer reports and artifacts.

@@ -6,7 +6,7 @@ ShieldPay helps small merchants assemble an item-not-received dispute response f
 
 > **Hackathon prototype.** Default mode is a working interactive demonstration with explicitly synthetic records. Its submission receipts are simulated. PayPal sandbox integration is a separate, credential-gated mode. No production PayPal endpoints, automatic refunds, dispute-win predictions, or hold-release guarantees.
 
-**Verified build:** 101 Python tests (including actual ONNX inference), 55 React tests, real-HTTP browser workflows and protected evidence import. PayPal sandbox authentication and reads are verified; evidence upload remains unverified. See [execution evidence and limitations](docs/BUILD_VERIFICATION.md).
+**Verified local build:** 147 Python tests (including actual ONNX inference), 73 React tests, real-HTTP browser workflows with model-backed analysis, inline PDF/payload preview, approval invalidation and protected raw-paste import. PayPal sandbox authentication and reads are verified; evidence upload remains unverified. See [execution evidence and limitations](docs/BUILD_VERIFICATION.md).
 
 ## Run locally
 
@@ -42,6 +42,10 @@ python scripts/run.py --check
 4. Explicitly approve the packet, then simulate submission. A local approval is not a PayPal submission; the receipt is labeled simulated.
 5. Select the in-transit and contradictory-order cases. Missing delivery or conflicting evidence should block a defense.
 6. Inspect the audit trail and reset the synthetic demo for another run.
+
+For the visible revision-change scenario, approve the supported packet without submitting it, then select **Simulate late buyer message** and confirm. The old approval/PDF is invalidated. Analyze again to inspect the contradiction. **Preview PayPal JSON + PDF parts** shows the locally constructed multipart input without contacting PayPal.
+
+If upgrading an older local demo, reset its synthetic data in Settings and analyze again. The newer payload checks require an exact carrier field and invalidate earlier analysis snapshots; do not reuse an old approval.
 
 ## How the AI is used
 
@@ -79,7 +83,9 @@ FastAPI -- SQLite records / analyses / approvals / audit
 
 For guided local setup, run `python scripts/setup_sandbox.py`. It creates a private `.env` and random admin token only if no `.env` exists. Fill sandbox Client ID/Secret in your local editor, then run `uv run python scripts/check_sandbox.py` for a read-only connection check. Start a separate sandbox instance with `python scripts/run.py --no-build --port 8788`.
 
-In a synced case, **Evidence → Import sandbox evidence** accepts a documented JSON array of structured, order-scoped test records. Import replaces local sources, requires explicit unverified-provenance acknowledgment and invalidates prior review state. It does not authenticate a carrier record or send evidence to PayPal. Do not paste real customer data. The current PDF has a limited Latin character repertoire and explicitly rejects unsupported characters rather than losing evidence. Multi-transaction disputes are not supported. Unresolved submissions block replacement and new attempts until reconciled outside this prototype.
+In a synced case, **Evidence → Import sandbox evidence** accepts a documented JSON array or a **Raw paste builder**. The builder requires explicit type/title/timestamp/target-order metadata, previews the unchanged text and adds it to the confirmed replacement batch. The server retains the original text and its UTF-8 hash separately from the provenance-prefixed record. Arbitrary prose is retained but can remain blocked for human interpretation; no facts or buyer identity are inferred.
+
+Import replaces local sources, requires explicit unverified-provenance acknowledgment and invalidates prior review state. It does not authenticate a carrier record or send evidence to PayPal. Do not paste real customer data. The structured PayPal payload requires matching tracking and an exact supported carrier field such as `Carrier: UPS`; preview it before sending. The PDF uses a licensed bundled font for a tested subset of Latin, Greek, Cyrillic and punctuation. Emoji, uncovered glyphs, combining marks and shaping-dependent scripts remain explicitly unsupported rather than silently disappearing. Multi-transaction disputes are not supported. Unresolved submissions block replacement and new attempts until reconciled outside this prototype.
 
 [PayPal integration guide](https://developer.paypal.com/docs/integration/direct/customer-disputes/integration-guide/) · [Evidence API](https://developer.paypal.com/api/customer-disputes/v1/disputes-provide-evidence)
 
@@ -93,6 +99,7 @@ In a synced case, **Evidence → Import sandbox evidence** accepts a documented 
 - [Paste-ready Devpost copy](docs/DEVPOST_COPY.md)
 - [Account-entry checklist](docs/ENTRY_FIELDS.md)
 - [External critique decisions and sandbox completion steps](docs/CRITIQUE_RESPONSE.md)
+- [Second evaluation: implemented changes and declined recommendations](docs/SECOND_REVIEW_DECISIONS.md)
 - [Natural recording script for your own video](docs/RECORDING_SCRIPT.md)
 - [Original cover and actual application screenshots](docs/assets/)
 - [Strategy and idea selection](docs/STRATEGY.md)

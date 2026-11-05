@@ -3,6 +3,7 @@ import { ArrowUpRight, ScanLine, FileText, ChevronRight } from 'lucide-react';
 import './review.css';
 import PacketActions from './PacketActions';
 import EvidenceImport from './EvidenceImport';
+import DemoDrift from './DemoDrift';
 import { AuditEntries } from './Audit';
 
 const label = (provider) =>
@@ -127,6 +128,21 @@ export default function CaseReview({ detail, health, api, onChange }) {
             <AuditEntries entries={detail.audit} />
           </>
         )}
+        {health?.mode === 'demo' && (
+          <DemoDrift
+            detail={detail}
+            api={api}
+            onChange={onChange}
+            disabled={!!busy}
+            onLockChange={(locked) => setBusy(locked ? 'drift' : '')}
+            onInvalidated={() => {
+              setAnalysisInvalidated(true);
+              setGeneration((value) => value + 1);
+              setFocusedSource('');
+              setTab('analysis');
+            }}
+          />
+        )}
         <div className="review-content" hidden={tab !== 'analysis'}>
           {!analysis ? (
             <>
@@ -139,7 +155,7 @@ export default function CaseReview({ detail, health, api, onChange }) {
               </p>
               <button className="primary wide" disabled={!!busy || !health} onClick={analyze}>
                 <ScanLine size={17} />
-                {busy ? 'Analyzing evidence…' : 'Analyze evidence'}
+                {busy === 'analyze' ? 'Analyzing evidence…' : 'Analyze evidence'}
                 <ArrowUpRight size={16} />
               </button>
               <p className="micro">
@@ -293,6 +309,12 @@ export default function CaseReview({ detail, health, api, onChange }) {
                   <dd>{source.occurred_at || 'Not recorded'}</dd>
                   <dt>SHA-256</dt>
                   <dd className="hash">{source.sha256}</dd>
+                  {source.original_sha256 && (
+                    <>
+                      <dt>Original pasted text SHA-256</dt>
+                      <dd className="hash">{source.original_sha256}</dd>
+                    </>
+                  )}
                 </dl>
               </article>
             ))}

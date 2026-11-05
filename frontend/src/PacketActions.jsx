@@ -2,6 +2,7 @@ import React, { useEffect, useId, useState } from 'react';
 import { Download, FileCheck2, LockKeyhole, Check, ArrowUpRight } from 'lucide-react';
 import ConfirmDialog from './ConfirmDialog';
 import './actions.css';
+import './reviewExtras.css';
 
 export default function PacketActions({
   detail,
@@ -13,6 +14,7 @@ export default function PacketActions({
   const analysis = detail.analysis;
   const id = useId();
   const [pdf, setPdf] = useState('');
+  const [payloadPreview, setPayloadPreview] = useState(null);
   const [name, setName] = useState('');
   const [reviewed, setReviewed] = useState(false);
   const [approval, setApproval] = useState(null);
@@ -35,6 +37,27 @@ export default function PacketActions({
       const blob = await api(path + '/packet.pdf', { responseType: 'blob' });
       setPdf(URL.createObjectURL(blob));
     } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy('');
+    }
+  }
+  async function previewPayload() {
+    setBusy('payload');
+    setError('');
+    try {
+      const response = await api(path + '/payload-preview');
+      if (
+        response.preview_only !== true ||
+        response.environment !== 'sandbox' ||
+        !response.input ||
+        response.file?.media_type !== 'application/pdf'
+      ) {
+        throw new Error('The server did not return a sandbox-only payload preview.');
+      }
+      setPayloadPreview(response);
+    } catch (e) {
+      setPayloadPreview(null);
       setError(e.message);
     } finally {
       setBusy('');
@@ -109,11 +132,32 @@ export default function PacketActions({
         {busy === 'pdf' ? 'Generating PDF…' : 'Generate PDF packet'}
       </button>
       {pdf && (
-        <a className="pdf-link" href={pdf} download={`ShieldPay-${detail.id}-evidence.pdf`}>
-          <FileCheck2 size={14} />
-          Download evidence PDF
-          <ArrowUpRight size={12} />
-        </a>
+        <div className="packet-preview">
+          <h5>Review the generated packet</h5>
+          <iframe src={pdf} title="Evidence packet PDF preview" />
+          <a className="pdf-link" href={pdf} download={`ShieldPay-${detail.id}-evidence.pdf`}>
+            <FileCheck2 size={14} />
+            Download evidence PDF
+            <ArrowUpRight size={12} />
+          </a>
+          <p className="micro">
+            If your browser cannot display the PDF here, use the download link. Previewing does not
+            approve or submit it.
+          </p>
+        </div>
+      )}
+      <button className="secondary wide" onClick={previewPayload} disabled={!!busy || !canSubmit}>
+        {busy === 'payload' ? 'Loading payload preview…' : 'Preview PayPal JSON + PDF parts'}
+      </button>
+      {payloadPreview && (
+        <section className="payload-preview" aria-label="PayPal multipart payload preview">
+          <p className="micro">
+            Multipart parts: input (application/json) + {payloadPreview.file.name}{' '}
+            (application/pdf).
+          </p>
+          <pre>{JSON.stringify(payloadPreview.input, null, 2)}</pre>
+          <p className="micro">{payloadPreview.detail}</p>
+        </section>
       )}
       <div className="packet-fingerprint">
         <span>PACKET SHA-256</span>

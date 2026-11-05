@@ -1,5 +1,17 @@
 # Frontend test evidence
 
+## Second evaluation pass
+
+New targeted tests cover inline PDF Blob preview and cleanup, server-generated multipart JSON preview without an approval/write, and the demo-only late-message scenario. The scenario requires confirmation, clears the old packet on acceptance and locks other review actions after a failed refresh until readback succeeds. Raw-paste draft tests are separate from these parent-owned tests.
+
+`verify-browser.mjs` now supports `SHIELDPAY_BROWSER_AI=onnx` to require real neural inference in the browser-driven workflow; the default remains an explicit lexical baseline for repeatability. Neither mode is a generative LLM. Both exercise real local HTTP endpoints, PDF generation, payload preview and an actual synthetic approval invalidation. See the current [build verification](../docs/BUILD_VERIFICATION.md) for executed results; support in the script alone is not proof a run passed.
+
+```text
+SHIELDPAY_BROWSER_AI=onnx PLAYWRIGHT_CHANNEL=chrome npm run test:browser
+```
+
+The historical counts below describe earlier implementation passes, not the current suite total.
+
 ## Feature-by-feature RED → GREEN
 
 Tests were written and executed before the corresponding interaction implementation. Each feature below had its listed observable failure, followed by a passing targeted or complete Vitest run before the next feature was added. Tests import the real AG Grid component; the grid is not mocked.

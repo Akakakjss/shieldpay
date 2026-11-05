@@ -152,8 +152,15 @@ class PayPal:
             for key in ["reason", "status", "amount", "currency", "response_due", "order_id"]:
                 if current.get(key) != expected_case.get(key):
                     raise PayPalError("Sandbox dispute changed since packet approval; sync and review a new packet. No evidence write was sent.", 409)
-        payload = {"evidences": [{"evidence_type": "PROOF_OF_FULFILLMENT", "notes": notes,
-                                  "documents": [{"name": DOCUMENT_NAME}]}]}
+        if expected_case is not None:
+            from backend.evidence_payload import build_evidence_payload
+            try:
+                payload = build_evidence_payload(expected_case, notes)
+            except ValueError as exc:
+                raise PayPalError("Evidence payload invalid: " + str(exc) + "; no evidence write was sent", 409) from exc
+        else:
+            payload = {"evidences": [{"evidence_type": "PROOF_OF_FULFILLMENT", "notes": notes,
+                                      "documents": [{"name": DOCUMENT_NAME}]}]}
         files = [("input", (None, json.dumps(payload), "application/json")),
                  ("evidence-file", (DOCUMENT_NAME, pdf, "application/pdf"))]
         headers = {**self._headers(), "PayPal-Request-Id": request_id}

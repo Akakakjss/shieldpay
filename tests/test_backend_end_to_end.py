@@ -53,11 +53,11 @@ def test_sandbox_api_human_gate_multipart_and_idempotent_verified_readback(tmp_p
         app.state.paypal = PayPal(settings, transport)
         headers = {"X-Admin-Token": "admin"}
         assert client.post("/api/paypal/sync", headers=headers).status_code == 200
-        # Test-only imported merchant records; production has no import/upload endpoint.
+        # Test-only records are inserted directly; no genuine merchant evidence is used.
         case = app.state.store.get_case("PP-D-12345", "sandbox")
         base = {k:v for k,v in case.items() if k not in {"sources", "audit", "analysis", "evidence_count"}}
         sources = [dict(id="test-order", type="order", title="Test-only order fixture", text="Order: TXN123\nTracking: TRACK123", order_id="TXN123", occurred_at=delivered_at),
-                   dict(id="test-carrier", type="carrier", title="Test-only carrier fixture", text="Order: TXN123\nTracking: TRACK123\nDelivery status: DELIVERED\nDelivered at: " + delivered_at, order_id="TXN123", occurred_at=delivered_at)]
+                   dict(id="test-carrier", type="carrier", title="Test-only carrier fixture", text="Order: TXN123\nTracking: TRACK123\nCarrier: UPS\nDelivery status: DELIVERED\nDelivered at: " + delivered_at, order_id="TXN123", occurred_at=delivered_at)]
         # Change a metadata value so Store updates the fixture sources as part of this setup.
         base["summary"] = "TEST FIXTURE ONLY: not real merchant evidence"
         app.state.store.put_case(base, "sandbox", sources=sources)

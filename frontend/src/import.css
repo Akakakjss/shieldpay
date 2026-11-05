@@ -46,7 +46,8 @@
 .import-help dd {
   margin: 0 0 9px;
 }
-.import-help pre {
+.import-help pre,
+.raw-draft pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   font:
@@ -80,4 +81,14 @@
     11px/1.8 'IBM Plex Mono',
     monospace;
   min-height: 180px;
+}
+.raw-draft {
+  min-width: 0;
+  margin: 14px 0;
+  border: 1px solid #cdd6c2;
+  padding: 12px;
+}
+.raw-draft .text-input {
+  display: block;
+  width: 100%;
 }

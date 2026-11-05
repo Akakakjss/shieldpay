@@ -21,7 +21,7 @@ def seed(store):
             return dict(id=suffix + "-" + kind, type=kind, title="Synthetic " + name,
                         text=text, occurred_at=timestamp, order_id=order)
         sources = [src("order", f"Order: {order}\nTracking: {tracking}\nItem: Canvas field bag\nAmount: USD 129.00", "order record"),
-                   src("carrier", f"Order: {order}\nTracking: {tracking}\nDelivery status: {status}\n" + (f"Delivered at: {timestamp}" if status == "DELIVERED" else "Proof of delivery: MISSING"), "carrier record")]
+                   src("carrier", f"Order: {order}\nTracking: {tracking}\nCarrier: UPS\nDelivery status: {status}\n" + (f"Delivered at: {timestamp}" if status == "DELIVERED" else "Proof of delivery: MISSING"), "carrier record")]
         if suffix == "1042":
             sources.append(src("buyer_message", "Order: " + order + "\nBuyer statement: I received the parcel. Thank you.", "buyer email"))
         if suffix == "1044":

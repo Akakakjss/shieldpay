@@ -6,14 +6,14 @@ from pathlib import Path
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field, field_validator
 from backend.packet import build_pdf
-from backend.actions import approve, submit, check_current
+from backend.actions import approve, submit, check_current, locked_case
 from backend.paypal import PayPal, PayPalError
 import secrets
 from backend.config import Settings
 from backend.demo import seed
 from backend.store import Store
 from backend.retrieval import Retriever
-from backend.analysis import analyze
+from backend.analysis import analyze, snapshot
 from backend.importing import ImportInput, import_sources
 
 
@@ -111,7 +111,13 @@ def create_app(settings=None, frontend_dist=None):
         result = analyze(case(case_id), app.state.retriever)
         import json
         with app.state.store.connect() as db:
-            db.execute("UPDATE cases SET analysis=? WHERE id=?", (json.dumps(result), case_id))
+            db.execute("BEGIN IMMEDIATE")
+            latest = locked_case(app.state.store, db, case_id, settings.mode)
+            if snapshot(latest) != result["source_snapshot"]:
+                raise HTTPException(409, "Evidence or dispute state changed during analysis; review the latest records and analyze again")
+            data = json.loads(db.execute("SELECT data FROM cases WHERE id=?", (case_id,)).fetchone()[0])
+            data["risk"] = "ready" if result["can_submit"] else ("blocked" if result["contradictions"] else "review")
+            db.execute("UPDATE cases SET analysis=?,data=? WHERE id=?", (json.dumps(result), json.dumps(data), case_id))
             app.state.store.record(case_id, "analyzed", "Evidence consistency policy applied; provider=" + result["provider"], db)
         return result
 
@@ -121,6 +127,21 @@ def create_app(settings=None, frontend_dist=None):
         check_current(current)
         return Response(build_pdf(current, settings.mode), media_type="application/pdf",
                         headers={"Content-Disposition": f'attachment; filename="shieldpay-{current["id"]}.pdf"'})
+
+    @app.get("/api/cases/{case_id}/payload-preview")
+    def payload_preview(case_id: str):
+        from backend.evidence_payload import build_evidence_payload
+        from backend.paypal import DOCUMENT_NAME
+        current = case(case_id)
+        analysis = check_current(current, require_defense=True)
+        try:
+            payload = build_evidence_payload(current, "ShieldPay packet " + analysis["packet_hash"])
+        except ValueError as exc:
+            raise HTTPException(409, "Payload preview blocked: " + str(exc)) from exc
+        return dict(environment="sandbox", preview_only=True, packet_hash=analysis["packet_hash"],
+                    input=payload, file=dict(name=DOCUMENT_NAME, media_type="application/pdf"),
+                    detail=("Synthetic data preview. " if settings.mode == "demo" else "Local sandbox packet preview. ") +
+                           "Multipart input JSON plus a generated binary PDF; no PayPal request sent. This preview does not approve or submit the packet.")
 
     @app.post("/api/cases/{case_id}/approve")
     def approve_case(case_id: str, payload: ApprovalInput):
@@ -160,6 +181,13 @@ def create_app(settings=None, frontend_dist=None):
     def audit():
         ids = {c["id"] for c in app.state.store.list_cases(settings.mode)}
         return [a for a in app.state.store.audit() if a["case_id"] in ids]
+
+    @app.post("/api/demo/cases/{case_id}/late-message")
+    def late_message(case_id: str):
+        if settings.mode != "demo":
+            raise HTTPException(409, "Synthetic drift scenarios are disabled in sandbox mode")
+        from backend.demo_drift import inject_late_message
+        return inject_late_message(app.state.store, case_id)
 
     @app.post("/api/demo/reset")
     def reset():

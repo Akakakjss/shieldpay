@@ -14,6 +14,9 @@ const repo = path.dirname(frontend);
 const artifacts = path.join(frontend, 'test-artifacts');
 await fs.mkdir(artifacts, { recursive: true });
 const scratch = process.env.TMPDIR || tmpdir();
+const browserAI = process.env.SHIELDPAY_BROWSER_AI || 'lexical';
+if (!['lexical', 'onnx'].includes(browserAI))
+  throw new Error('SHIELDPAY_BROWSER_AI must be lexical or onnx');
 const db = path.join(scratch, `shieldpay-browser-${process.pid}.sqlite3`);
 const reserve = createServer();
 await new Promise((resolve) => reserve.listen(0, '127.0.0.1', resolve));
@@ -35,7 +38,7 @@ const backend = spawn(
     env: {
       ...process.env,
       SHIELDPAY_MODE: 'demo',
-      SHIELDPAY_AI: 'lexical',
+      SHIELDPAY_AI: browserAI,
       SHIELDPAY_DB: db,
       PAYPAL_CLIENT_ID: '',
       PAYPAL_CLIENT_SECRET: '',
@@ -54,7 +57,7 @@ backend.stderr.on('data', (chunk) => {
 let server, browser;
 const report = {
   realBackend: true,
-  ai: 'lexical-baseline',
+  ai: browserAI === 'onnx' ? 'local-onnx' : 'lexical-baseline',
   checks: [],
   consoleErrors: [],
   requestFailures: [],
@@ -158,8 +161,21 @@ try {
     nodes: v.nodes.map((n) => ({ target: n.target, summary: n.failureSummary })),
   }));
   await page.getByRole('button', { name: 'Analyze evidence', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Prepare a response' })).toBeVisible();
-  await expect(page.getByText('Lexical baseline · not a generative LLM')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Prepare a response' })).toBeVisible({
+    timeout: 90000,
+  });
+  await expect(
+    page.getByText(
+      browserAI === 'onnx'
+        ? 'Local ONNX retrieval · not a generative LLM'
+        : 'Lexical baseline · not a generative LLM',
+    ),
+  ).toBeVisible();
+  report.checks.push(
+    browserAI === 'onnx'
+      ? 'Actual browser analysis completed real local ONNX inference'
+      : 'Explicit lexical browser baseline',
+  );
   await page.getByRole('button', { name: 'Inspect source 1042-carrier', exact: true }).click();
   await expect(page.locator('.source-record.source-focused .source-text')).toContainText(
     'Delivery status: DELIVERED',
@@ -170,6 +186,17 @@ try {
   await page.getByRole('tab', { name: 'Review', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Approve packet', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: 'Generate PDF packet', exact: true }).click();
+  await expect(page.getByTitle('Evidence packet PDF preview')).toBeVisible();
+  await page.getByRole('button', { name: 'Preview PayPal JSON + PDF parts', exact: true }).click();
+  await expect(
+    page.getByRole('region', { name: 'PayPal multipart payload preview' }),
+  ).toContainText('SYNTH-TRACK-1042');
+  await expect(
+    page.getByRole('region', { name: 'PayPal multipart payload preview' }),
+  ).toContainText('application/pdf');
+  report.checks.push(
+    'Actual generated PDF inline preview and server-generated JSON + binary PDF part preview',
+  );
   const downloadEvent = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Download evidence PDF' }).click();
   const download = await downloadEvent;
@@ -220,7 +247,45 @@ try {
   ).toBeDisabled();
   await page.screenshot({ path: path.join(artifacts, 'operator-settings.png'), fullPage: true });
   report.checks.push('Real audit readback and honest credential/provider settings');
+  await page.getByRole('button', { name: 'Reset synthetic demo', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm reset', exact: true }).click();
+  await expect(page.getByText('Synthetic workspace reset.')).toBeVisible();
   await page.getByRole('button', { name: 'Queue', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Open Synthetic Buyer 1042 DEMO-1042', exact: true })
+    .click();
+  await page.getByRole('button', { name: 'Analyze evidence', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Prepare a response' })).toBeVisible({
+    timeout: 90000,
+  });
+  await page.getByRole('button', { name: 'Generate PDF packet', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Approved by' }).fill('Drift scenario reviewer');
+  await page.getByRole('checkbox', { name: /I reviewed the PDF/ }).check();
+  await page.getByRole('button', { name: 'Approve packet', exact: true }).click();
+  await expect(page.getByText('Approved locally · not sent to PayPal')).toBeVisible();
+  const prior = await (await fetch(base + '/api/cases/DEMO-1042')).json();
+  await page.getByRole('button', { name: 'Simulate late buyer message', exact: true }).click();
+  await page.getByRole('button', { name: 'Add synthetic message', exact: true }).click();
+  await expect(page.getByText('Approval invalidated', { exact: true })).toBeVisible();
+  await expect(page.getByTitle('Evidence packet PDF preview')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Simulate submission', exact: true })).toHaveCount(
+    0,
+  );
+  const changed = await (await fetch(base + '/api/cases/DEMO-1042')).json();
+  expect(changed.analysis).toBeNull();
+  expect(changed.risk).toBe('review');
+  expect(changed.sources.length).toBeGreaterThan(prior.sources.length);
+  await page.getByRole('button', { name: 'Analyze evidence', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Review for a refund' })).toBeVisible({
+    timeout: 90000,
+  });
+  const blockedAfterDrift = await (await fetch(base + '/api/cases/DEMO-1042')).json();
+  expect(blockedAfterDrift.risk).toBe('blocked');
+  await expect(page.getByRole('button', { name: 'Approve packet', exact: true })).toBeDisabled();
+  await page.screenshot({ path: path.join(artifacts, 'operator-drift.png'), fullPage: true });
+  report.checks.push(
+    'Actual approved packet invalidated by late synthetic message; old PDF removed and new defense blocked',
+  );
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: path.join(artifacts, 'operator-mobile.png'), fullPage: true });
   const overflow = await page.evaluate(

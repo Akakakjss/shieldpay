@@ -5,10 +5,84 @@ import pytest
 from fastapi.testclient import TestClient
 from backend.app import create_app
 from backend.config import Settings
+from email.parser import BytesParser
+from email.policy import default
+from backend.evidence_payload import build_evidence_payload
+import hashlib
+
+
+def _case():
+    records = [("order", "Order: ORDER-1\nTracking: ABC123"),
+               ("carrier", "Order: ORDER-1\nTracking: ABC123\nCarrier: UPS\nDelivery status: DELIVERED\nDelivered at: 2024-01-01T00:00:00Z")]
+    return {"order_id": "ORDER-1", "sources": [{"type": kind, "order_id": "ORDER-1", "text": text,
+            "sha256": hashlib.sha256(text.encode()).hexdigest()} for kind, text in records]}
 
 BASE = "https://api-m.sandbox.paypal.com"
 DISPUTE = "PP-D-12345"
 PATH = f"/v1/customer/disputes/{DISPUTE}"
+
+
+def test_expected_case_sends_structured_tracking_in_parsed_multipart():
+    from backend.paypal import PayPal
+    from backend.sync import map_dispute
+    payloads = []
+    dispute = {"dispute_id": DISPUTE, "status": "WAITING_FOR_SELLER_RESPONSE",
+               "disputed_transactions": [{"seller_transaction_id": "ORDER-1"}],
+               "links": [{"rel": "provide-evidence", "method": "POST", "href": BASE + PATH + "/provide-evidence"}],
+               "evidences": []}
+    case = {**map_dispute(dispute), **_case()}
+    def handle(request):
+        if request.url.path == "/v1/oauth2/token":
+            return httpx.Response(200, json={"access_token": "token"})
+        if request.method == "GET":
+            return httpx.Response(200, json=dispute)
+        content_type = request.headers["content-type"]
+        mime = BytesParser(policy=default).parsebytes(("Content-Type: " + content_type + "\r\nMIME-Version: 1.0\r\n\r\n").encode() + request.content)
+        parts = {p.get_param("name", header="content-disposition"): p for p in mime.iter_parts()}
+        assert set(parts) == {"input", "evidence-file"}
+        assert parts["input"].get_content_type() == "application/json"
+        assert json.loads(parts["input"].get_payload(decode=True)) == build_evidence_payload(case, "packet")
+        assert parts["evidence-file"].get_content_type() == "application/pdf"
+        assert parts["evidence-file"].get_filename() == "shieldpay-evidence.pdf"
+        assert parts["evidence-file"].get_payload(decode=True) == b"%PDF-test"
+        payloads.append(True)
+        return httpx.Response(200, json={})
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        paypal = PayPal(Settings(mode="sandbox", paypal_client_id="id", paypal_client_secret="secret"), client)
+        paypal.provide_evidence(DISPUTE, b"%PDF-test", "packet", "approval", expected_case=case)
+    assert payloads == [True]
+
+
+@pytest.mark.parametrize("change", ["missing_carrier", "integrity", "ambiguous", "foreign"])
+def test_expected_case_validation_blocks_evidence_write(change):
+    from backend.paypal import PayPal, PayPalError
+    from backend.sync import map_dispute
+    dispute = {"dispute_id": DISPUTE, "status": "WAITING_FOR_SELLER_RESPONSE",
+               "disputed_transactions": [{"seller_transaction_id": "ORDER-1"}],
+               "links": [{"rel": "provide-evidence", "method": "POST", "href": BASE + PATH + "/provide-evidence"}]}
+    case = {**map_dispute(dispute), **_case()}
+    carrier = case["sources"][1]
+    if change == "integrity":
+        carrier["text"] += " tampered"
+    elif change == "foreign":
+        carrier["order_id"] = "OTHER"
+    else:
+        text = carrier["text"] + ("\nCarrier: FEDEX" if change == "ambiguous" else "")
+        if change == "missing_carrier":
+            text = text.replace("Carrier: UPS\n", "")
+        carrier.update(text=text, sha256=hashlib.sha256(text.encode()).hexdigest())
+    writes = []
+    def handle(request):
+        if request.url.path == "/v1/oauth2/token":
+            return httpx.Response(200, json={"access_token": "token"})
+        if request.method == "POST":
+            writes.append(request)
+        return httpx.Response(200, json=dispute)
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        paypal = PayPal(Settings(mode="sandbox", paypal_client_id="id", paypal_client_secret="secret"), client)
+        with pytest.raises(PayPalError, match="no evidence write was sent"):
+            paypal.provide_evidence(DISPUTE, b"%PDF-test", "packet", "approval", expected_case=case)
+    assert writes == []
 
 
 def test_sandbox_http_adapter_oauth_hateoas_multipart_and_exact_readback():

@@ -1,6 +1,14 @@
 """A real PDF; quoted evidence is data, never markup or an action."""
 from io import BytesIO
+from pathlib import Path
+import unicodedata
 from fastapi import HTTPException
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+FONT_NAME = "ShieldPayDejaVuMono"
+pdfmetrics.registerFont(TTFont(FONT_NAME, str(Path(__file__).parent / "assets" / "fonts" / "DejaVuSansMono.ttf")))
+pdfmetrics.registerFontFamily(FONT_NAME, normal=FONT_NAME, bold=FONT_NAME, italic=FONT_NAME, boldItalic=FONT_NAME)
 from xml.sax.saxutils import escape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
@@ -8,10 +16,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Preformatte
 
 
 def assert_packet_text_supported(case):
-    """Reject characters not safely represented by the built-in PDF fonts.
+    """Check bundled font coverage and restrict text to scripts without shaping.
 
-    This deliberately conservative repertoire is not general Unicode support.
-    Call on the analyzed case before approval as well as before rendering.
+    Combining marks, direction controls and scripts requiring shaping are rejected
+    even when the font has a glyph. This is not general Unicode support.
     """
     analysis = case["analysis"]
     fields = [case[k] for k in ("id", "order_id", "reason")]
@@ -27,7 +35,14 @@ def assert_packet_text_supported(case):
     for value in fields:
         for char in str(value):
             code = ord(char)
-            if not (char == "\n" or 0x20 <= code <= 0x7e or 0xa1 <= code <= 0xff and code != 0xad):
+            in_safe_range = (0x20 <= code <= 0x024F or 0x0370 <= code <= 0x052F
+                             or 0x2000 <= code <= 0x206F)
+            category = unicodedata.category(char)
+            supported = (in_safe_range and category[0] not in "CMZ"
+                         and code in pdfmetrics.getFont(FONT_NAME).face.charWidths)
+            if char == " ":
+                supported = True
+            if char != "\n" and not supported:
                 raise HTTPException(status_code=422, detail=(
                     f"PDF packet cannot safely render U+{code:04X}. "
                     "This packet format cannot preserve it; retain the original evidence and use another evidence format."
@@ -41,7 +56,9 @@ def build_pdf(case, mode):
     doc = SimpleDocTemplate(output, title="ShieldPay evidence packet", author="ShieldPay",
                             leftMargin=40, rightMargin=40, topMargin=40, bottomMargin=40)
     styles = getSampleStyleSheet()
-    mono = ParagraphStyle("Evidence", fontName="Courier", fontSize=7, leading=10, alignment=TA_LEFT)
+    for style in styles.byName.values():
+        style.fontName = FONT_NAME
+    mono = ParagraphStyle("Evidence", fontName=FONT_NAME, fontSize=7, leading=10, alignment=TA_LEFT)
     story = []
     def para(text, style="BodyText"):
         story.append(Paragraph(escape(str(text)), styles[style]))

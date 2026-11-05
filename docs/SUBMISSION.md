@@ -1,4 +1,6 @@
-# ShieldPay — Devpost submission draft
+# ShieldPay — submission status and historical drafting notes
+
+For the current second-evaluation build, use [DEVPOST_COPY.md](DEVPOST_COPY.md), [BUILD_VERIFICATION.md](BUILD_VERIFICATION.md), [SECOND_REVIEW_DECISIONS.md](SECOND_REVIEW_DECISIONS.md) and [ENTRY_FIELDS.md](ENTRY_FIELDS.md). The longer narrative and test counts below are historical drafting notes, not the current pitch or suite total.
 
 Use [DEVPOST_COPY.md](DEVPOST_COPY.md) for the current humanized, paste-ready story and [COMPLETE_SUMMARY.md](COMPLETE_SUMMARY.md) for the consolidated handoff. The entrant will upload their own video; the assistant's local draft is not the final submission video. No entry has been saved or submitted in a Devpost account.
 
@@ -9,7 +11,7 @@ Use [DEVPOST_COPY.md](DEVPOST_COPY.md) for the current humanized, paste-ready st
 | Field | Draft / status |
 | --- | --- |
 | Project name | ShieldPay |
-| Tagline | The dispute assistant that shows its evidence—and knows when not to defend. |
+| Tagline | Turn scattered PayPal dispute records into a response you can check before you send. |
 | Public source repository | https://github.com/Akakakjss/shieldpay — public; GitHub detects MIT; anonymous access verified. |
 | YouTube demo | **REQUIRED — NOT UPLOADED**. Local narrated draft: `artifacts/shieldpay-demo-draft.mp4`,160 seconds. Insert a public YouTube URL only after upload and playback verification. |
 | Functional demo | The public repository's complete local instructions were exercised from a fresh public clone. Hosted URL: **none**; hosting optional.[1] |

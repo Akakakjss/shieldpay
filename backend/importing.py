@@ -82,7 +82,9 @@ def import_sources(store, case_id, payload):
         sources = []
         for record in payload.sources:
             source = record.model_dump()
-            source.update(id="IMP-" + str(uuid4()), title="UNVERIFIED human-provided | " + record.title,
+            source.update(original_text=record.text,
+                          original_sha256=hashlib.sha256(record.text.encode("utf-8")).hexdigest(),
+                          id="IMP-" + str(uuid4()), title="UNVERIFIED human-provided | " + record.title,
                           text=PROVENANCE + "\n" + record.text, reviewed_by=payload.reviewed_by,
                           imported_at=now(), provenance="unverified_human_provided")
             source["sha256"] = hashlib.sha256(source["text"].encode()).hexdigest()
@@ -90,6 +92,8 @@ def import_sources(store, case_id, payload):
         db.execute("DELETE FROM sources WHERE case_id=?", (case_id,))
         for source in sources:
             db.execute("INSERT INTO sources VALUES(?,?,?)", (source["id"], case_id, json.dumps(source)))
-        db.execute("UPDATE cases SET analysis=NULL WHERE id=?", (case_id,))
+        data = json.loads(db.execute("SELECT data FROM cases WHERE id=?", (case_id,)).fetchone()[0])
+        data["risk"] = "review"
+        db.execute("UPDATE cases SET analysis=NULL,data=? WHERE id=?", (json.dumps(data), case_id))
         store.record(case_id, "sources_imported", f"Replaced {len(sources)} sources with unverified human-provided records; NOT carrier authenticated. Reviewed by {payload.reviewed_by}.", db)
     return dict(case_id=case_id, imported=len(sources), verified=False, detail=PROVENANCE)

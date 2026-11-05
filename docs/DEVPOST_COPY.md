@@ -24,7 +24,7 @@ The same review also catches reasons to pause. In the demo, an in-transit shipme
 
 Before submission, a person reviews and approves a specific packet. Replace the evidence and that approval expires: a new version needs a new review. The audit trail connects those steps to the packet that was approved.
 
-The interactive demo includes a supported case and both blocked cases. Its records are synthetic and submission is explicitly simulated.
+The interactive demo includes a supported case and both blocked cases. It can also inject a late synthetic buyer message after approval so you can watch the old approval disappear and inspect the new contradiction. Its records are synthetic and submission is explicitly simulated.
 
 ## How I built it
 
@@ -34,7 +34,9 @@ I split retrieval from permission to act. A local neural embedding model, BAAI/b
 
 The PDF carries source hashes so a reviewer can check which stored text belongs to the reviewed version. Approval is tied to that version. This makes the evidence trail inspectable without asking a language model to invent tracking details or decide liability.
 
-PayPal's sandbox Disputes API supplies the dispute-integration layer. A separate protected import screen lets the operator add structured sandbox test records before reviewing a case.
+PayPal's sandbox Disputes API supplies the dispute-integration layer. A local payload preview shows structured tracking JSON alongside the PDF attachment metadata before dispatch. The PDF itself can be reviewed inside the workspace or downloaded.
+
+The protected sandbox importer also accepts raw pasted text through a draft builder, so the operator can preview and assign records without writing JSON. It preserves the submitted text and its hash. Unstructured text still needs human interpretation; the app does not invent missing delivery facts.
 
 ## Challenges I ran into
 
@@ -46,7 +48,7 @@ Approval also needed to survive real editing behavior. Replacing evidence while 
 
 The useful output is a response packet someone can inspect, with the original quotations beside the findings. I also built the cases where the right next step is to stop and review the record.
 
-The published build passed 101 Python tests and 55 React tests, including actual local-model inference and browser checks against running HTTP servers. GitHub Actions runs the build, tests and browser workflows. A clean public clone was also installed and tested using the README instructions.
+The updated local build passed 147 Python tests and 73 React tests. Browser checks exercised actual local-model inference against a running HTTP server, generated PDFs and the new approval-invalidation scenario. GitHub Actions provides the build/test/browser workflow. The earlier public release also passed a clean-clone installation test using the README instructions; detailed verification distinguishes revisions.
 
 ## What I learned
 

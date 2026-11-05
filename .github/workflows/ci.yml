@@ -33,7 +33,7 @@ jobs:
         run: npx playwright install --with-deps chrome
       - name: Browser against actual isolated HTTP backend
         working-directory: frontend
-        run: npm run test:browser
+        run: SHIELDPAY_BROWSER_AI=onnx npm run test:browser
       - name: Protected sandbox-shaped importer against actual HTTP backend
         run: node scripts/verify_import_browser.mjs
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -17,7 +17,11 @@ def check_current(case, packet_hash=None, require_defense=False):
         # Recheck deadlines/status without a network operation or trusting a previous decision.
         policy = analyze(case, Retriever("lexical"))
         if not analysis["can_submit"] or not policy["can_submit"]:
-            raise HTTPException(409, "Evidence is not eligible for a defense; resolve gaps and contradictions")
+            detail = "Evidence is not eligible for a defense; resolve gaps and contradictions"
+            payload_gap = next((gap for gap in policy["gaps"] if gap.startswith("Structured evidence cannot be constructed: ")), None)
+            if payload_gap:
+                detail += "; " + payload_gap
+            raise HTTPException(409, detail)
         from backend.packet import assert_packet_text_supported
         assert_packet_text_supported(case)
     return analysis

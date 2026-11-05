@@ -30,7 +30,7 @@ function timestampValid(value) {
   );
 }
 
-export function validateImport(text, reviewer, orderId) {
+export function validateImport(text, reviewer, orderId, { rawDraftIndices = [] } = {}) {
   const errors = [];
   let sources = null;
   if (text.trim()) {
@@ -74,8 +74,15 @@ export function validateImport(text, reviewer, orderId) {
           else {
             const orderLines = record.text
               .split(/\r\n|\r|\n/)
-              .filter((line) => line.startsWith('Order: '));
-            if (orderLines.length !== 1 || orderLines[0] !== `Order: ${orderId}`)
+              .filter((line) =>
+                rawDraftIndices.includes(index)
+                  ? /^\s*order\s*:/i.test(line)
+                  : line.startsWith('Order: '),
+              );
+            if (
+              !(orderLines.length === 0 && rawDraftIndices.includes(index)) &&
+              (orderLines.length !== 1 || orderLines[0] !== `Order: ${orderId}`)
+            )
               errors.push(prefix + `text must contain exactly one line Order: ${orderId}.`);
           }
           if (!singleLine(record.order_id, 255) || record.order_id !== orderId)
