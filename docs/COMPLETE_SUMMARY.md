@@ -33,7 +33,7 @@ The negative cases are part of the product: missing delivery proof blocks a defe
 - Actual PayPal sandbox authentication and dispute-list reads succeeded. That check returned zero disputes.
 - Dependency and staged-source secret scans completed without findings at the recorded revision. Private .env files, databases and caches were excluded.
 
-Historical GitHub CI passed the earlier application revision's full build/test/browser workflow on Ubuntu 24.04: https://github.com/Akakakjss/shieldpay/actions/runs/41873732878. The second-evaluation source changes have the local execution evidence above; their new CI run must be checked separately after publication.
+The second-evaluation application revision `3d5e31b3d35f2edeef8cfd4292c9908f6c908b3b` passed the full Ubuntu 24.04 install/test/build and both browser workflows: https://github.com/Akakakjss/shieldpay/actions/runs/42060938836. Its exact head SHA and successful job/step conclusions were read back. Follow-up changes record this evidence and normalize formatting in one test without changing its JavaScript tokens or runtime application source.
 
 ## Important limits
 

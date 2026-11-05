@@ -42,15 +42,13 @@ it('shows the server-generated multipart JSON preview without approving or submi
       },
     ],
   };
-  const api = vi
-    .fn()
-    .mockResolvedValue({
-      preview_only: true,
-      environment: 'sandbox',
-      input,
-      file: { name: 'shieldpay-evidence.pdf', media_type: 'application/pdf' },
-      detail: 'Synthetic data preview. No PayPal request sent.',
-    });
+  const api = vi.fn().mockResolvedValue({
+    preview_only: true,
+    environment: 'sandbox',
+    input,
+    file: { name: 'shieldpay-evidence.pdf', media_type: 'application/pdf' },
+    detail: 'Synthetic data preview. No PayPal request sent.',
+  });
   render(
     <PacketActions
       detail={{ id: 'DEMO-1042', analysis: { can_submit: true, packet_hash: 'a'.repeat(64) } }}

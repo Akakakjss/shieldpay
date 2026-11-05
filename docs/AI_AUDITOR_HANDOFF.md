@@ -4,7 +4,11 @@
 
 Public source: https://github.com/Akakakjss/shieldpay
 
-Record the exact commit SHA you inspect. Use the updated second-evaluation revision supplied with this handoff, not the older 101-backend/55-frontend release. These Markdown files describe the implementation and recorded checks; they are supplied evidence, not an independent audit conclusion.
+Verified application revision: `3d5e31b3d35f2edeef8cfd4292c9908f6c908b3b`.
+
+Verified CI: https://github.com/Akakakjss/shieldpay/actions/runs/42060938836 — complete Ubuntu install/test/build plus model-backed browser and protected raw-import browser workflows succeeded.
+
+Record the exact commit SHA you inspect. This handoff follows that application commit with documentation/evidence updates and token-equivalent formatting in one test; no runtime source changed in the follow-up. Do not substitute the older 101-backend/55-frontend release. These Markdown files describe the implementation and recorded checks; they are supplied evidence, not an independent audit conclusion.
 
 ## Read in this order
 
